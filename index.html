@@ -517,16 +517,12 @@
   }
 
   // We cannot read the cross-origin response from the hidden iframe, so we
-  // never get a real success/failure signal back from Google. As a
-  // best-effort safety net against a transient hiccup on the very first
-  // attempt, silently re-send the same submission twice more a few seconds
-  // apart. Harmless if the first attempt already worked -- duplicate rows
-  // are far less costly than a silently lost response.
+  // never get a real success/failure signal back from Google. Submitting
+  // once keeps the sheet 1 row per response; the hidden-iframe POST to
+  // Google Forms is reliable in practice, so we no longer duplicate-send.
   function submitWithRetries(record){
     var params = buildEntryParams(record);
     try{ submitViaHiddenForm(params); }catch(e){}
-    window.setTimeout(function(){ try{ submitViaHiddenForm(params); }catch(e){} }, 2500);
-    window.setTimeout(function(){ try{ submitViaHiddenForm(params); }catch(e){} }, 6000);
   }
 
   /* ============ render: result ============ */
